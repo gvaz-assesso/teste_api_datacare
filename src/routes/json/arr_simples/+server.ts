@@ -27,3 +27,37 @@ export async function GET() {
 
 	return json(obj);
 }
+
+type MeuObjeto = {
+	msg: string;
+	id: number;
+};
+
+function isMeuObjeto(obj: any): obj is MeuObjeto {
+	return (
+		typeof obj === 'object' &&
+		obj !== null &&
+		typeof obj.msg === 'string' &&
+		typeof obj.id === 'number' &&
+		obj.data instanceof Date
+	);
+}
+
+// 🔍 checagem para array de objetos
+function isMeuObjetoArray(arr: any): arr is MeuObjeto[] {
+	return (
+		Array.isArray(arr) && arr.every((item) => isMeuObjeto({ ...item, data: new Date(item.data) }))
+	);
+}
+
+export async function POST({ request }) {
+	const body = await request.json();
+	console.log(body);
+
+	// ✅ transforma `data` em Date para cada item do array
+	if (isMeuObjetoArray(body)) {
+		return json({ msg: 'array postado corretamente' }, { status: 201 });
+	}
+
+	return json({ msg: 'post com erros' }, { status: 403 });
+}

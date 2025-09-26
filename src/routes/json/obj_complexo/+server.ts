@@ -1,55 +1,83 @@
 import { json } from '@sveltejs/kit';
 
-export async function GET({ params }) {
-	const obj = {
-		id: 1,
-		nome: 'João Silva',
-		email: 'joao.silva@example.com',
-		idade: 28,
-		ativo: true,
-		endereco: {
-			rua: 'Rua das Flores',
-			numero: 123,
-			cidade: 'São Paulo',
-			estado: 'SP',
-			cep: '01000-000'
-		},
-		telefones: [
-			{
-				tipo: 'celular',
-				numero: '+55 11 91234-5678'
-			},
-			{
-				tipo: 'residencial',
-				numero: '+55 11 4002-8922'
-			}
-		],
-		preferencias: {
-			linguagem: 'pt-BR',
-			tema: 'escuro',
-			notificacoes: {
-				email: true,
-				sms: false,
-				push: true
-			}
-		},
-		historico_compras: [
-			{
-				id_pedido: 1001,
-				data: '2025-09-20',
-				valor: 199.9,
-				itens: [
-					{ produto: 'Teclado Mecânico', quantidade: 1 },
-					{ produto: 'Mouse Gamer', quantidade: 1 }
-				]
-			},
-			{
-				id_pedido: 1002,
-				data: '2025-09-22',
-				valor: 89.9,
-				itens: [{ produto: 'Headset USB', quantidade: 1 }]
-			}
-		]
+type MeuObjeto = {
+	msg: string;
+	id: number;
+	item: {
+		nome: string;
+		preco: number;
+		cat: string[];
 	};
-	return json(obj);
+};
+
+const dados: MeuObjeto[] = [
+	{
+		msg: 'Objeto 1',
+		id: 1,
+		item: {
+			nome: 'Teclado Mecânico',
+			preco: 199.9,
+			cat: ['periférico', 'gaming']
+		}
+	},
+	{
+		msg: 'Objeto 2',
+		id: 2,
+		item: {
+			nome: 'Mouse Gamer',
+			preco: 89.9,
+			cat: ['periférico', 'gaming']
+		}
+	},
+	{
+		msg: 'Objeto 3',
+		id: 3,
+		item: {
+			nome: 'Headset USB',
+			preco: 129.5,
+			cat: ['periférico', 'audio']
+		}
+	}
+];
+
+export const GET = async () => {
+	return json(dados, { status: 200 });
+};
+
+// Função de checagem
+function isMeuObjeto(obj: any): obj is MeuObjeto {
+	return (
+		typeof obj === 'object' &&
+		obj !== null &&
+		typeof obj.msg === 'string' &&
+		typeof obj.id === 'number' &&
+		typeof obj.item === 'object' &&
+		obj.item !== null &&
+		typeof obj.item.nome === 'string' &&
+		typeof obj.item.preco === 'number' &&
+		Array.isArray(obj.item.cat) &&
+		obj.item.cat.every((c: any) => typeof c === 'string')
+	);
+}
+
+// Checagem para array de objetos
+function isMeuObjetoArray(arr: any): arr is MeuObjeto[] {
+	return Array.isArray(arr) && arr.every(isMeuObjeto);
+}
+
+export async function POST({ request }) {
+	const body = await request.json();
+	console.log(body);
+
+	if (Array.isArray(body)) {
+		if (isMeuObjetoArray(body)) {
+			return json({ msg: 'array postado corretamente' }, { status: 201 });
+		}
+	} else {
+		if (isMeuObjeto(body)) {
+			return json({ msg: 'objeto postado corretamente' }, { status: 201 });
+		}
+	}
+
+	return json({ msg: 'post com erros' }, { status: 403 });
 }
