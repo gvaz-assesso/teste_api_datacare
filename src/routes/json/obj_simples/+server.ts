@@ -32,7 +32,10 @@ export async function POST({ request }) {
 	console.log(body);
 
 	if (isMeuObjeto(body)) {
-		return json({ msg: 'post feito corretamente' }, { status: 201 });
+		return json(
+			{ msg: 'post feito corretamente', id_og: body.id, msg_og: body.msg },
+			{ status: 201 }
+		);
 	}
 	return json({ msg: 'post com erros' }, { status: 403 });
 }
