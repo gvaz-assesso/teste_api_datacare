@@ -14,7 +14,7 @@ export async function GET() {
 
 type MeuObjeto = {
 	msg: string;
-	id: number;
+	id: string;
 	// data: Date;
 };
 
@@ -23,13 +23,13 @@ function isMeuObjeto(obj: any): obj is MeuObjeto {
 		typeof obj === 'object' &&
 		obj !== null &&
 		typeof obj.msg === 'string' &&
-		typeof obj.id === 'number'
+		typeof obj.id === 'string'
 	);
 }
 
 export async function POST({ request }) {
 	const body = await request.json();
-	console.log(body);
+	console.log('Foi recebido a requisisão', body);
 
 	if (isMeuObjeto(body)) {
 		return json(
@@ -37,5 +37,5 @@ export async function POST({ request }) {
 			{ status: 201 }
 		);
 	}
-	return json({ msg: 'post com erros' }, { status: 403 });
+	return json({ msg: 'post com erros' }, { status: 401 });
 }
