@@ -32,9 +32,7 @@ function isMeuObjeto(obj: any): obj is MeuObjeto {
 		typeof obj.item === 'object' &&
 		obj.item !== null &&
 		typeof obj.item.categoria === 'string' &&
-		typeof obj.item.preco === 'string' &&
-		Array.isArray(obj.item.cat) &&
-		obj.item.cat.every((c: any) => typeof c === 'string')
+		typeof obj.item.preco === 'string'
 	);
 }
 
