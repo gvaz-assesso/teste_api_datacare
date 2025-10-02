@@ -68,7 +68,10 @@ export async function POST({ request }) {
 
 	if (Array.isArray(body)) {
 		// if (isMeuObjetoArray(body)) {
-		return json({ msg: 'array postado corretamente' }, { status: 201 });
+		return json(
+			{ msg: 'array postado corretamente', obj_og: JSON.stringify(body) },
+			{ status: 201 }
+		);
 		// }
 	} else {
 		// if (isMeuObjeto(body)) {
